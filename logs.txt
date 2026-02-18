@@ -1,0 +1,19 @@
+Feb 18 09:01:12 srv-app-01 sshd[2145]: Accepted password for roger from 192.168.0.15 port 53421 ssh2
+
+Feb 18 09:03:47 srv-app-01 nginx: 192.168.0.20 - - [18/Feb/2026:09:03:47 +0000] "GET /dashboard HTTP/1.1" 200 842 "-" "Mozilla/5.0"
+
+Feb 18 09:04:02 srv-app-01 node-app[3321]: ERROR Database connection timeout after 5000ms
+
+Feb 18 09:05:11 srv-app-01 mysqld[1987]: Access denied for user 'root'@'localhost' (using password: YES)
+
+Feb 18 09:06:33 srv-app-01 kernel: IPTABLES DROP IN=eth0 OUT= MAC=00:16:3e:ab:12:4c SRC=45.77.21.99 DST=10.0.0.10 LEN=60 PROTO=TCP SPT=53321 DPT=22
+
+Feb 18 09:07:55 srv-app-01 docker[4012]: Container api-service restarted due to exit code 1
+
+Feb 18 09:10:00 srv-app-01 CRON[4521]: (root) CMD (/usr/local/bin/backup.sh)
+
+Feb 18 09:11:42 srv-app-01 systemd[1]: nginx.service: Failed with result 'exit-code'
+
+Feb 18 09:12:18 srv-app-01 kernel: Out of memory: Kill process 3321 (node-app) score 287 or sacrifice child
+
+Feb 18 09:13:05 srv-app-01 wazuh-agent: Alert Level 7 - Suspicious login pattern detected from 192.168.0.33
