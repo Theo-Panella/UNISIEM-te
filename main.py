@@ -1,7 +1,7 @@
 import re
 
 # Padrão de Analise
-# Data | Hora | serviço | Tipo de log
+# Data | Hora | IP de requisicao | IP de Destino | Serviço | Porta | Protocolo | Username | Hostname
 # Tipo de log: Erro, acesso, alteração, requisição
 file = open('logs.txt', 'r')
 default_words = ['sshd','nginx','node-app','mysqld','kernel','docker','CRON','systemd']
