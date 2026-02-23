@@ -28,19 +28,13 @@ def analisa_usuario(usuario):
 
 def analisa(log_splitado):
     newdata = {
+        1 : {
         "Data do Log": analisa_data(log_splitado),
         "Usuario do Log": analisa_usuario(log_splitado)
         }
+        }
     
-    # Atualiza o dicionário com os novos dados
-    newdata.update(data)
-
-    # Aplica os dados ao arquivo yaml
-    with open("file.yaml","w") as yaml_file:
-        yaml.dump(newdata, yaml_file)
-    print(data)
-    print(newdata)
-
+    return newdata
 
     #if analisa_usuario(log_splitado) == None:
     #    print("Usuario do Log: Usuario não encontrado")
@@ -54,5 +48,12 @@ def analisa(log_splitado):
 #logs = re.findall(f"{data_atual}.+",file.read()) #Pega o dia (primeiro valor do log) e coloca o resultado na array logs array
 
 for c in range(len(logs)):
-    analisa(logs[c].split()) # Retorna toda linha quebrada em array, cada valor separado por espaço
+    
+    # Atualiza o dicionário com os novos dados
+    data.update(analisa(logs[c].split())) # Retorna toda linha quebrada em array, cada valor separado por espaço
+
+    # Aplica os dados ao arquivo yaml
+    with open("file.yaml","a") as yaml_file:
+        yaml.dump(data, yaml_file)
+    print(analisa(logs[c].split()))
 
