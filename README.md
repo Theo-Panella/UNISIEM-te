@@ -1,6 +1,6 @@
 # UNISIEM-te
 
-Este repositório contém o projeto **UNISIEM-te**, desenvolvido como um **projeto acadêmico** e Prova de Conceito (PoC) para um sistema de **SIEM (Security Information and Event Management)** simplificado, focado na análise de logs de autenticação SSH.
+Este repositório contém o projeto **UNISIEM-te**, desenvolvido como um **projeto acadêmico**  para um sistema de **SIEM (Security Information and Event Management)** simplificado, focado na análise de logs de autenticação SSH.
 
 ## 🚀 Conceito do Projeto
 
