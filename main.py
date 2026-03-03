@@ -23,8 +23,10 @@ servidores = ["server01"]
 log_file = open('logs.txt', 'r')
 
 # Leitura de linha dentro de uma array, cada linha é um index da array
-logs = log_file.readlines() #
+logs = log_file.readlines() 
 data = {}
+contador_tentativas = {}
+
 
 # Bloco de Analise de usuarios
 #Feb 24 10:00:26 server01 sshd[1032]: Invalid user test from 45.83.12.77 port 60112
@@ -37,55 +39,48 @@ data = {}
 # --------------------------------------------------------------------------------------------------------------------
 # Bloco de Criticidade
 # --------------------------------------------------------------------------------------------------------------------
-def criticidade(usuario, ip_origem, porta, contexto):
+def criticidade(usuario, ip_origem, porta, contexto, tentativas=1):
     score = 0
-    agravantes = 0
 
     # ----------------------------
-    # Peso baseado no contexto
+    # Classificação de IP
+    # ----------------------------
+    if ip_origem in IPs:
+        score += 1   # IP conhecido
+    else:
+        score += 4   # IP desconhecido
+
+    # ----------------------------
+    # Classificação de Usuário
+    # ----------------------------
+    if usuario in Usuarios:
+        score += 1   # Usuário conhecido
+    else:
+        score += 4   # Usuário inexistente/desconhecido
+
+    # ----------------------------
+    # Contexto de autenticação
     # ----------------------------
     pesos_contexto = {
-        "usuario inexistente": 4,
-        "Acesso Negado": 3,
-        "Conexão fechada": 1,
-        "Acesso aceito": 1
+        "senha_errada": 1,
+        "senha_correta": 3,
+        "acesso_negado": 3,
+        "conexao_fechada": 1
     }
 
     score += pesos_contexto.get(contexto, 0)
 
     # ----------------------------
-    # Desvio de usuário
-    # ----------------------------
-    if usuario not in Usuarios:
-        score += 2
-        agravantes += 1
-    if usuario in ["root", "admin"] and ip_origem not in IPs:
-        score += 3
-    elif usuario in ["root","admin"]:
-        score+=2
-
-    # ----------------------------
-    # Desvio de IP
-    # ----------------------------
-    if ip_origem not in IPs:
-        score += 2
-        agravantes += 1
-
-    # ----------------------------
-    # Desvio de porta
+    # Porta não padrão (desvio adicional)
     # ----------------------------
     if porta not in Portas_padrao:
         score += 1
-        agravantes += 1
 
     # ----------------------------
-    # Agravante por múltiplos desvios
+    # Ataque por força bruta
     # ----------------------------
-    if agravantes >= 2:
-        score += 2   # penalidade adicional por comportamento anômalo composto
-
-    if agravantes == 3:
-        score += 2   # risco crítico por múltiplos vetores alterados
+    if tentativas >= 5:
+        score += 5
 
     return score
 
@@ -98,7 +93,6 @@ def classificar_criticidade(score):
         return "MEDIA"
     else:
         return "BAIXA"
-
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -118,21 +112,65 @@ def analisa_geral(logs):
         return result
         
 
+data = {}
+eventos_agregados = {}
 
-for c in range(len(logs)):
-    analise_por_campo = analisa_geral(logs[c])
-    newdata = {
-        c: {
-        "Usario": analise_por_campo["Usario"],
-        "Endereco Servidor": analise_por_campo["Endereco Servidor"],
-        "IP de Origem": analise_por_campo["IP de Origem"],
-        "porta de Conexao": analise_por_campo["porta de Conexao"],
-        "PID:" : analise_por_campo["PID:"],
-        "Resumo do Log": analise_por_campo["Contexto"],
-        "Criticidade": classificar_criticidade(criticidade(analise_por_campo["Usario"], analise_por_campo["IP de Origem"], analise_por_campo["porta de Conexao"], analise_por_campo["Contexto"]))
-        }}
+for log in logs:
+    analise_por_campo = analisa_geral(log)
 
-    data.update(newdata)
+    usuario = analise_por_campo["Usario"]
+    ip_origem = analise_por_campo["IP de Origem"]
+    contexto = analise_por_campo["Contexto"]
+    endereco_servidor = analise_por_campo["Endereco Servidor"]
+    porta = analise_por_campo["porta de Conexao"]
+    pid = analise_por_campo["PID:"]
 
-with open("file.yaml","w") as file:
+    # ----------------------------------------
+    # Chave principal de agregação
+    # ----------------------------------------
+    chave_evento = (usuario, ip_origem, contexto, endereco_servidor)
+
+    if chave_evento not in eventos_agregados:
+        eventos_agregados[chave_evento] = {
+            "Usario": usuario,
+            "Endereco Servidor": endereco_servidor,
+            "IP de Origem": ip_origem,
+            "Resumo do Log": contexto,
+            "Tentativas": 1,
+            "Portas": [porta],
+            "PIDs": [pid]
+        }
+    else:
+        eventos_agregados[chave_evento]["Tentativas"] += 1
+
+        # Adiciona porta apenas se for diferente
+        if porta not in eventos_agregados[chave_evento]["Portas"]:
+            eventos_agregados[chave_evento]["Portas"].append(porta)
+
+        # Mesmo critério para PID
+        if pid not in eventos_agregados[chave_evento]["PIDs"]:
+            eventos_agregados[chave_evento]["PIDs"].append(pid)
+
+
+# ----------------------------------------
+# Aplicar criticidade após agregação
+# ----------------------------------------
+
+for i, (chave, evento) in enumerate(eventos_agregados.items()):
+    usuario, ip_origem, contexto, endereco_servidor = chave
+
+    evento["Criticidade"] = classificar_criticidade(
+        criticidade(
+            usuario,
+            ip_origem,
+            evento["Portas"][0],  # Porta principal (primeira)
+            contexto,
+            evento["Tentativas"]
+        )
+    )
+
+    data[i] = evento
+
+
+with open("file.yaml", "w") as file:
     yaml.dump(data, file)
