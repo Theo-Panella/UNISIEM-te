@@ -1,9 +1,17 @@
+## P1 = URGENTE
+## P2 = Necessario
+## P3 = Dá pra esperar
 
-### To do
-
+### To do P1
+- [ ] Aplicar os re.compile do restante dos metodos de analise (pid, porta e servidor) - 04/03/2026 theo 
 - [ ] Subir servidor ssh e pegar logs reais para testes - 04/03/2026 theo
+
+### To do P2
 - [ ] Implementação de Elastic Search - 04/03/2026 theo
+
+### To do P3
 - [ ] Pesquisar como fazer para leitura em tempo real de logs - 04/03/2026 theo 
+
 
 ### In Progress
 
