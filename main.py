@@ -48,9 +48,12 @@ def criticidade(usuario, ip_origem, porta, contexto, tentativas=1):
     # Contexto de autenticação
     # ----------------------------
     pesos_contexto = {
-        "Acesso aceito": 3,
-        "Acesso Negado": 3,
-        "Conexão fechada": 1
+        "Acesso aceito": 1,
+        "Acesso Negado": 2,
+        "Conexão fechada": 1,
+        "usuario inexistente": 1,
+        "Evento desconhecido": 0,
+        "Linha Branca": 0
     }
 
 
@@ -78,10 +81,10 @@ def criticidade(usuario, ip_origem, porta, contexto, tentativas=1):
     else:
         if usuario in Usuarios:
             if contexto == "Acesso Negado":
-                score = 2 + pesos_contexto[contexto]
+                score = 4 + pesos_contexto[contexto]
 
             elif contexto == "Acesso aceito":
-                score = 6 + pesos_contexto[contexto]
+                score = 14 + pesos_contexto[contexto]
 
             else:
                 score = 2 + pesos_contexto[contexto]
@@ -92,18 +95,13 @@ def criticidade(usuario, ip_origem, porta, contexto, tentativas=1):
             else:
                 score = 1 + pesos_contexto[contexto]
 
-    score += pesos_contexto.get(contexto, 0)
-
     # ----------------------------
     # Porta não padrão (desvio adicional)
     # ----------------------------
     if porta not in Portas_padrao:
         score += 1
 
-    # ----------------------------
-    # Ataque por força bruta
-    # ----------------------------
-    if tentativas >= 5:
+    if tentativas >= 3:
         score += 5
 
     return score
