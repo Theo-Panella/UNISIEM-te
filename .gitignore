@@ -11,6 +11,7 @@ Analise/__pycache__/
 
 # banco de dados
 nerdy-web/*.db
+nerdy.db
 
 # variáveis de ambiente
 .env
