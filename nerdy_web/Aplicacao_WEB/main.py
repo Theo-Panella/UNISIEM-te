@@ -38,7 +38,7 @@ def registrar_falha(ip):
         _tentativas[ip] = {"tentativas": 0, "bloqueado_ate": None}
     _tentativas[ip]["tentativas"] += 1
     if _tentativas[ip]["tentativas"] >= LIMITE_TENTATIVAS:
-        _tentativas[ip]["bloqueado_ate"] = datetime.now() + timedelta(minutes=BLOQUEIO_MINUTOS)
+        #_tentativas[ip]["bloqueado_ate"] = datetime.now() + timedelta(minutes=BLOQUEIO_MINUTOS)
         _tentativas[ip]["tentativas"] = 0
 
 
@@ -121,7 +121,7 @@ def login():
             registrar_log(usuario, ip, "falha")
             return render_template(
                 "login.html",
-                erro=f"Usuário ou senha inválidos. ({faltam} tentativa(s) restante(s) antes do bloqueio)"
+                erro=f"Usuário ou senha inválidos. "#({faltam} tentativa(s) restante(s) antes do bloqueio)"
             )
 
     return render_template("login.html")
@@ -161,6 +161,13 @@ def registrar_log(usuario, ip, status):
         f'method={metodo} endpoint="{endpoint}" '
         f'user-agent="{user_agent}"'
     )
+
+    with open("logs.txt", "a") as file:
+        file.write(raw_log + "\n")
+
+    print("-="*76)
+    print(raw_log)
+    print("-="*76)
 
     db  = get_db()
     cur = db.cursor()
