@@ -1,0 +1,22 @@
+name: "Deploy para VPS"
+on:
+  push:
+    Branches:
+      - main
+
+jobs:
+  build_deploy:
+    runs-on: alpine-latest
+
+    steps:
+      - name: "Baixa o codigo"
+        uses: actions/checkout@4
+        
+      - name: "Copia arquivos via SSH"
+        uses: appleboy/scp-action@v1
+        with:
+          host: 145.223.26.118
+          username: "root"
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "."
+          target: /documents
