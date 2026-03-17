@@ -15,7 +15,7 @@
 
 O Nerdy nasceu como um SIEM simplificado para logs SSH e está sendo expandido para cobrir análise de tráfego web e logs de servidor Nginx. O sistema lê logs incrementalmente via agente (Mini Mim), faz parsing com Regex, classifica cada evento por score de criticidade e — dependendo do nível — dispara resposta automatizada via Ansible ou alerta o administrador por e-mail.
 
-A branch `homologacao` representa a transição ativa: saindo do escopo exclusivo de SSH para um pipeline genérico capaz de processar logs de aplicação web e Nginx, com os mesmos princípios de scoring e resposta.
+A branch `dev` representa a transição ativa: saindo do escopo exclusivo de SSH para um pipeline genérico capaz de processar logs de aplicação web e Nginx, com os mesmos princípios de scoring e resposta.
 
 ---
 
