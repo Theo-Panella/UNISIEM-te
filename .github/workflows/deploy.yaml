@@ -22,7 +22,7 @@ jobs:
           source: "."
           target: Nerdy
       
-      - name: "Inicia Aplicacao"
+      - name: "Configuração / Start da Aplicacao"
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.IP_SERVER_NERDY }}
