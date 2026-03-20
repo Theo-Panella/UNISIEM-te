@@ -20,7 +20,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           key_format: base64
           source: "."
-          target: ~/Nerdy
+          target: Nerdy
       
       - name: "Inicia Aplicacao"
         uses: appleboy/ssh-action@v1

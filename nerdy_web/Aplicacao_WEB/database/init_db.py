@@ -55,13 +55,10 @@ CREATE TABLE IF NOT EXISTS logs (
 cur.execute("SELECT id FROM users WHERE usuario='admin'")
 if not cur.fetchone():
     senha_hash = bcrypt.hashpw(b"projetounip2026", bcrypt.gensalt()).decode()
-    usuarios = [
-        ("Administrador", "admin", senha_hash, "", 1),
-        ("Nerd", "nerdy", senha_hash, "", 0)
-    ]
-    cur.executemany(
+    cur.execute(
         "INSERT INTO users(nome, usuario, senha, ip, is_admin) VALUES(?,?,?,?,?)",
-        usuarios
+        ("Administrador", "admin", senha_hash, "", 1)
+        ("Nerd", "nerdy", senha_hash, " " , 0)
     )
     print("Usuário admin criado  →  usuario: admin  |  senha: projetounip2026")
 else:
