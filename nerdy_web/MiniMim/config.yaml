@@ -4,7 +4,3 @@
 Flask: 
     Failure: ".* nerdy-web flask[.*]: Failed password for .*"
     Accepted: ".* nerdy-web flask[.*]: Accepted password for .*"
-
-Nginx:
-    Failure: ".* nerdy-web nginx[.*]: Failed password for .*"
-    #Accepted: ".* nerdy-web nginx[.*]: Accepted password for .*"
