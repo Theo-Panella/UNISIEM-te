@@ -1,35 +1,63 @@
+#====================================================================================
 import time
 import re
 import yaml
-
+from collections import deque
 from watchdog.events import FileSystemEvent, FileSystemEventHandler,FileModifiedEvent
 from watchdog.observers import Observer
+#====================================================================================
 
-services_list = ['Flask','Nginx']
 
-with open('nerdy_web/MiniMim/config.yaml', 'r') as config_file:
-    config = yaml.safe_load(config_file)
-    aceito = re.compile(".* nerdy-web flask[.*]: Accepted password for .*")
-    negado = re.compile(".* nerdy-web flask[.*]: Failed password for .*")
+#====================================================================================
+# Variaveis Globais
+lista_de_servico = ['Flask']
+caminho_de_configuracao = "nerdy_web/MiniMim/config.yaml"
+caminho_de_log = './flask_logs.txt'
+quantidade_de_ultimas_linhas = 3
+fila_de_linhas = []
+#====================================================================================
 
-def pre_filtragem(aceito,negado,arquivo):
-    log_accepted = re.findall(aceito,arquivo)
-    log_failure = re.findall(negado,arquivo)
-    print(log_accepted, arquivo)
-    print(log_failure, arquivo)
-    
 
+#====================================================================================
+# Abre o arquivo de Configuracao e compila, para melhor desempenho
+#
+# Ver como escalacionar o processo de compilacao (multiplas variacoes de configuracoes)
+
+with open(caminho_de_configuracao, 'r') as arquivo_de_configuracao_puro:
+    configuracao = yaml.safe_load(arquivo_de_configuracao_puro)
+    Failure = re.compile(configuracao['Flask']['Failure'])
+    Accepted = re.compile(configuracao['Flask']['Accepted'])
+#====================================================================================
+
+
+#====================================================================================
+# Funcao de pre_Filtro do Flask
+def flask_pre_filter(ultimas_linhas,Failure,Accepted):
+    print(Failure)
+    print(Accepted)
+    for cada_linha in ultimas_linhas:
+        print(cada_linha.strip())
+        if re.search(Failure, cada_linha.strip()) or re.findall(Accepted, cada_linha.strip()):
+            print('Log de Acesso encontrado')
+
+#====================================================================================
+
+
+#====================================================================================
+# Classe evento do Watchdog
 class MyEventHandler(FileSystemEventHandler):
     def on_any_event(self, event: FileSystemEvent) -> None:
-        #print(f"Evento: {event.event_type} / caminho: {event.src_path} / Destino: {event.dest_path} / {event.is_synthetic}")
-        #print(event)
-        if event.src_path == ".\\flask_logs.txt" and event.event_type == "modified":
+        if event.src_path == "./flask_logs.txt" and event.event_type == "modified":
             print("Nova tentativa de Login detectada")
             print("Analisando log...")
-            pre_filtragem(aceito,negado,"/flask_logs.txt")
-            
+            with open(caminho_de_log, "r", encoding="utf-8") as f:
+                ultimas_linhas = deque(f, maxlen=quantidade_de_ultimas_linhas)
+                flask_pre_filter(ultimas_linhas,Failure,Accepted)
+#====================================================================================
 
 
+#====================================================================================
+#Chama evento e mantem em loop
 event_handler = MyEventHandler()
 observer = Observer()
 observer.schedule(event_handler, ".", recursive=True)
@@ -40,3 +68,4 @@ try:
 finally:
     observer.stop()
     observer.join()
+#====================================================================================
