@@ -162,7 +162,8 @@ def registrar_log(usuario, ip, status):
         f'user-agent="{user_agent}"'
     )
 
-    with open("flask_logs.txt", "a") as file:
+    # Gera Arquivo de logs da Aplicação em Nerdy/MiniMim/
+    with open("MiniMim/flask_logs.txt", "a") as file:
         file.write(raw_log + "\n")
 
     print("-="*76)
