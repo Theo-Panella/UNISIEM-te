@@ -1,0 +1,14 @@
+# Arquivo de Configuração - Usuario decide qual serviço devem ser filtrados, e inserir os tipos de logs que devem ser filtrados
+# Melhora consideravel em customização de filtragem inicial para cada caso
+
+Flask: 
+    Failure: 'nerdy-web flask\[\d+\]: Failed password for .'
+    Accepted: 'nerdy-web flask\[\d+\]: Accepted password for .*'
+
+Nginx: 
+    Failure: 'nerdy-web flask\[\d+\]: Failed password for .'
+    Accepted: 'nerdy-web flask\[\d+\]: Accepted password for'
+    
+Estreber: 
+    Failure: 'nerdy-web flask\[\d+\]: Failed password for .'
+    Accepted: 'nerdy-web flask\[\d+\]: Accepted password for'
