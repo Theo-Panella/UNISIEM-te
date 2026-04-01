@@ -33,10 +33,8 @@ with open(caminho_de_configuracao, 'r') as arquivo_de_configuracao_puro:
 #====================================================================================
 # Funcao de pre_Filtro do Flask
 def flask_pre_filter(ultimas_linhas,Failure,Accepted):
-    print(Failure)
-    print(Accepted)
     for cada_linha in ultimas_linhas:
-        print(cada_linha.strip())
+        print(re.match(Failure,cada_linha.strip()))
         if re.search(Failure, cada_linha.strip()) or re.findall(Accepted, cada_linha.strip()):
             print('Log de Acesso encontrado')
 
